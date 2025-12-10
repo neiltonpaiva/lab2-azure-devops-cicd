@@ -30,9 +30,7 @@ stages:
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'   # nome da Service Connection
               regionName: '$(awsRegion)'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
+              awsCommand: |
                 set -e
 
                 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
@@ -73,9 +71,7 @@ stages:
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'
               regionName: '$(awsRegion)'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
+              awsCommand: |
                 set -e
 
                 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
@@ -97,10 +93,8 @@ stages:
             displayName: "Registrar nova Task Definition"
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'
-              regionName: '$(awsRegion)'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
+              regionName: '$(awsRegion)'              
+              awsCommand: |
                 set -e
 
                 ARN=$(aws ecs register-task-definition \
@@ -116,9 +110,7 @@ stages:
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'
               regionName: '$(awsRegion)'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
+              awsCommand: |
                 set -e
 
                 CLUSTER="$(ecsCluster)"
