@@ -28,7 +28,7 @@ stages:
           - task: AWSCLI@1
             displayName: "Login no ECR e Push"
             inputs:
-              awsCredentials: 'aws-oidc-ecs-deploy'   # nome da Service Connection
+              awsCredentials: 'lab2-azure-devops-cicd-connection'   # nome da Service Connection
               regionName: '$(awsRegion)'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
@@ -71,7 +71,7 @@ stages:
           - task: AWSCLI@1
             displayName: "Renderizar Task Definition"
             inputs:
-              awsCredentials: 'aws-oidc-ecs-deploy'
+              awsCredentials: 'lab2-azure-devops-cicd-connection'
               regionName: '$(awsRegion)'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
@@ -114,7 +114,7 @@ stages:
           - task: AWSCLI@1
             displayName: "Atualizar Service ECS"
             inputs:
-              awsCredentials: 'aws-oidc-ecs-deploy'
+              awsCredentials: 'lab2-azure-devops-cicd-connection'
               regionName: '$(awsRegion)'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
