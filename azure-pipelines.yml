@@ -6,9 +6,9 @@ pool:
 
 variables:
   awsRegion: 'us-east-1'
-  ecrRepository: 'lab2-ecs-nginx'       # AJUSTAR SE NOME DO REPO FOR OUTRO
-  ecsCluster: 'lab2-ecs-cluster'        # AJUSTAR PRO NOME REAL DO CLUSTER
-  ecsService: 'lab2-ecs-service'        # AJUSTAR PRO NOME REAL DO SERVICE
+  ecrRepository: 'lab2-ecs-nginx'       # AJUSTAR SE O NOME DO REPOSITÓRIO NO ECR FOR OUTRO
+  ecsCluster: 'lab2-ecs-cluster'        # AJUSTAR PRO NOME REAL DO CLUSTER ECS
+  ecsService: 'lab2-ecs-service'        # AJUSTAR PRO NOME REAL DO SERVICE ECS
 
 stages:
   - stage: Build
@@ -25,18 +25,19 @@ stages:
               echo "Usando TAG: $TAG"
             displayName: "Definir TAG (SHA)"
 
-          - task: AWSCLI@1
+          - task: AWSShellScript@1
             displayName: "Login no ECR e Push"
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'   # NOME EXATO DA SERVICE CONNECTION
               regionName: '$(awsRegion)'
-              awsCommand: |
+              scriptType: inline
+              inlineScript: |
                 set -e
 
                 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-                REGION="$(awsRegion)"
-                REPO="$(ecrRepository)"
-                TAG="$(imageTag)"
+                REGION='$(awsRegion)'
+                REPO='$(ecrRepository)'
+                TAG='$(imageTag)'
 
                 ECR_URI="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPO}"
 
@@ -65,18 +66,19 @@ stages:
               echo "Usando TAG (Deploy): $TAG"
             displayName: "Garantir mesma TAG"
 
-          - task: AWSCLI@1
+          - task: AWSShellScript@1
             displayName: "Renderizar Task Definition"
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'
               regionName: '$(awsRegion)'
-              awsCommand: |
+              scriptType: inline
+              inlineScript: |
                 set -e
 
                 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-                REGION="$(awsRegion)"
-                REPO="$(ecrRepository)"
-                TAG="$(imageTag)"
+                REGION='$(awsRegion)'
+                REPO='$(ecrRepository)'
+                TAG='$(imageTag)'
 
                 ECR_URI="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPO}"
                 IMAGE="${ECR_URI}:${TAG}"
@@ -88,12 +90,13 @@ stages:
                 echo "Task definition resultante:"
                 cat rendered-task-def.json
 
-          - task: AWSCLI@1
+          - task: AWSShellScript@1
             displayName: "Registrar nova Task Definition"
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'
               regionName: '$(awsRegion)'
-              awsCommand: |
+              scriptType: inline
+              inlineScript: |
                 set -e
 
                 ARN=$(aws ecs register-task-definition \
@@ -104,17 +107,18 @@ stages:
                 echo "Nova Task Definition ARN: $ARN"
                 echo "##vso[task.setvariable variable=taskDefArn]$ARN"
 
-          - task: AWSCLI@1
+          - task: AWSShellScript@1
             displayName: "Atualizar Service ECS"
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'
               regionName: '$(awsRegion)'
-              awsCommand: |
+              scriptType: inline
+              inlineScript: |
                 set -e
 
-                CLUSTER="$(ecsCluster)"
-                SERVICE="$(ecsService)"
-                TASK_DEF_ARN="$(taskDefArn)"
+                CLUSTER='$(ecsCluster)'
+                SERVICE='$(ecsService)'
+                TASK_DEF_ARN='$(taskDefArn)'
 
                 echo "Atualizando service $SERVICE no cluster $CLUSTER para TD:"
                 echo "  $TASK_DEF_ARN"
