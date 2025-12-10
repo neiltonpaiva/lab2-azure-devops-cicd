@@ -6,9 +6,9 @@ pool:
 
 variables:
   awsRegion: 'us-east-1'
-  ecrRepository: 'lab2-ecs-nginx'
-  ecsCluster: 'lab2-ecs-cluster'
-  ecsService: 'lab2-ecs-service'
+  ecrRepository: 'lab2-ecs-nginx'       # AJUSTAR SE NOME DO REPO FOR OUTRO
+  ecsCluster: 'lab2-ecs-cluster'        # AJUSTAR PRO NOME REAL DO CLUSTER
+  ecsService: 'lab2-ecs-service'        # AJUSTAR PRO NOME REAL DO SERVICE
 
 stages:
   - stage: Build
@@ -28,7 +28,7 @@ stages:
           - task: AWSCLI@1
             displayName: "Login no ECR e Push"
             inputs:
-              awsCredentials: 'lab2-azure-devops-cicd-connection'   # nome da Service Connection
+              awsCredentials: 'lab2-azure-devops-cicd-connection'   # NOME EXATO DA SERVICE CONNECTION
               regionName: '$(awsRegion)'
               awsCommand: |
                 set -e
@@ -60,10 +60,9 @@ stages:
           - checkout: self
 
           - script: |
-              # Recalcula a mesma TAG do commit (mesmo SHA)
               TAG=$(git rev-parse --short HEAD)
               echo "##vso[task.setvariable variable=imageTag]$TAG"
-              echo "Usando TAG: $TAG"
+              echo "Usando TAG (Deploy): $TAG"
             displayName: "Garantir mesma TAG"
 
           - task: AWSCLI@1
@@ -93,7 +92,7 @@ stages:
             displayName: "Registrar nova Task Definition"
             inputs:
               awsCredentials: 'lab2-azure-devops-cicd-connection'
-              regionName: '$(awsRegion)'              
+              regionName: '$(awsRegion)'
               awsCommand: |
                 set -e
 
