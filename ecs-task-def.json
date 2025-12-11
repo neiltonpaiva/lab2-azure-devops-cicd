@@ -4,8 +4,8 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "arn:aws:iam::111111111111:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::111111111111:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::981595166339:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::981595166339:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
       "name": "lab2-ecs-nginx-container",
